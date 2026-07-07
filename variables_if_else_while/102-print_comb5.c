@@ -4,7 +4,6 @@
  * main - Entry point
  *
  * Description: Prints all possible combinations of two two-digit numbers
- * في نطاق من 00 إلى 99 وبترتيب تصاعدي دون تكرار.
  *
  * Return: Always 0 (Success)
  */
