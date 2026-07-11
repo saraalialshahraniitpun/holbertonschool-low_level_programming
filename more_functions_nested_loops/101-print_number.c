@@ -1,30 +1,29 @@
-#include <stdio.h>
+#include "main.h"
 
 /**
- * sum_to_n - Computes the sum of all integers from 1 to n
- * @n: The upper limit number
+ * print_number - Prints an integer using only _putchar
+ * @n: The integer to print
  *
- * Return: The total sum
+ * Return: void
  */
-int sum_to_n(int n)
+void print_number(int n)
 {
-	int i;
-	int sum = 0;
+	unsigned int num;
 
-	for (i = 1; i <= n; i++)
-		sum += i;
+	if (n < 0)
+	{
+		_putchar('-');
+		num = -n;
+	}
+	else
+	{
+		num = n;
+	}
 
-	return (sum);
-}
+	if (num / 10)
+	{
+		print_number(num / 10);
+	}
 
-/* -- DO NOT Modify the code below this line -- */
-/**
- * main - Entry point
- *
- * Return: Always 0
- */
-int main(void)
-{
-	printf("%d\n", sum_to_n(10));
-	return (0);
+	_putchar((num % 10) + '0');
 }
