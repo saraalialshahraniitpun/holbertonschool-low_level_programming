@@ -8,6 +8,7 @@ static int dataset[DATASET_SIZE];
 
 static unsigned int next_value(unsigned int *state)
 {
+    /* تصحيح العملية الحسابية لإيجاد القيمة التالية */
     *state = (*state * 1103515245u) + 12345u;
     return *state;
 }
@@ -18,7 +19,6 @@ static void build_dataset(void)
     int i;
 
     state = SEED_VALUE;
-
     for (i = 0; i < DATASET_SIZE; i++)
         dataset[i] = (int)(next_value(&state) % 100000);
 }
@@ -31,6 +31,7 @@ static void process_dataset(void)
     for (i = 0; i < DATASET_SIZE; i++)
     {
         v = dataset[i];
+        /* تصحيح صياغة المعادلة الحسابية للمرحلة */
         v = (v * 3) + (v / 7) - (v % 11);
         if (v < 0)
             v = -v;
@@ -53,22 +54,50 @@ static unsigned long reduce_checksum(void)
 int main(void)
 {
     unsigned long checksum;
+    
+    /* تعريف متغيرات حساب الوقت المطلوبة */
+    clock_t total_start, total_end;
+    clock_t phase_start, phase_end;
+    
+    double total_time;
+    double build_time;
+    double process_time;
+    double reduce_time;
 
-    /* Students must add clock-based timing and print required lines. */
+    /* بدء حساب الوقت الكلي */
+    total_start = clock();
 
+    /* 1. قياس مرحلة BUILD_DATA */
+    phase_start = clock();
     build_dataset();
-    process_dataset();
-    checksum = reduce_checksum();
+    phase_end = clock();
+    build_time = (double)(phase_end - phase_start) / CLOCKS_PER_SEC;
 
+    /* 2. قياس مرحلة PROCESS */
+    phase_start = clock();
+    process_dataset();
+    phase_end = clock();
+    process_time = (double)(phase_end - phase_start) / CLOCKS_PER_SEC;
+
+    /* 3. قياس مرحلة REDUCE */
+    phase_start = clock();
+    checksum = reduce_checksum();
+    phase_end = clock();
+    reduce_time = (double)(phase_end - phase_start) / CLOCKS_PER_SEC;
+
+    /* إنهاء حساب الوقت الكلي */
+    total_end = clock();
+    total_time = (double)(total_end - total_start) / CLOCKS_PER_SEC;
+
+    /* هذا الشرط لحماية الكود من الـ Optimization أثناء الكومبايل */
     if (checksum == 0ul)
         printf("impossible\n");
 
-    /* Required output (exact format, no extra lines):
-     * TOTAL seconds: <float>
-     * BUILD_DATA seconds: <float>
-     * PROCESS seconds: <float>
-     * REDUCE seconds: <float>
-     */
+    /* طباعة المخرجات بالشروط المحددة بدقة تامة (أربعة أسطر فقط وبدون أسطر إضافية) */
+    printf("TOTAL seconds: %.6f\n", total_time);
+    printf("BUILD_DATA seconds: %.6f\n", build_time);
+    printf("PROCESS seconds: %.6f\n", process_time);
+    printf("REDUCE seconds: %.6f\n", reduce_time);
 
-    return 0;
+    return (0);
 }
