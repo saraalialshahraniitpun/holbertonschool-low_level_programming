@@ -7,14 +7,16 @@
 void print_rev(char *s)
 {
 	int len = 0;
-	 
+
+	/* Find length of string */
 	while (s[len] != '\0')
 	{
-		len ++;
+		len++;
 	}
-	 
+
+	/* Print in reverse */
 	len--;
-	while(len >= 0)
+	while (len >= 0)
 	{
 		_putchar(s[len]);
 		len--;
