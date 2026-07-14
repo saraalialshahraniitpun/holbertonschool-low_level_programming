@@ -7,11 +7,11 @@
 void rev_string(char *s)
 {
 	int len = 0;
-	int start = 0'
+	int start = 0;
 	int end;
 	char temp;
- 
-	/* calcolate*/	
+
+	/* Find length of string */
 	while (s[len] != '\0')
 	{
 		len++;
@@ -19,15 +19,14 @@ void rev_string(char *s)
 
 	end = len - 1;
 
-	/*swap*/
-	 while (start < end)
-	 {
-		 temp = s[start];
-		 s[start] = s[end];
-		  s[end] = temp;
+	/* Swap characters from both ends */
+	while (start < end)
+	{
+		temp = s[start];
+		s[start] = s[end];
+		s[end] = temp;
 
-		  start++;
-		  end--;
-	 }
+		start++;
+		end--;
+	}
 }
-
