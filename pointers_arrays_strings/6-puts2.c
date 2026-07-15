@@ -13,12 +13,11 @@ void puts2(char *str)
 	{
 		_putchar(str[i]);
 
-		/*check*/
-		if (str[i+1] != '\0')
+		if (str[i + 1] != '\0')
 		{
 			i += 2;
 		}
-		else 
+		else
 		{
 			break;
 		}
