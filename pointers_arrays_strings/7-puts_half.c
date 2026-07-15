@@ -9,10 +9,13 @@ void puts_half(char *str)
 	int len = 0;
 	int start;
 
+	/* Calculate length of string */
 	while (str[len] != '\0')
 	{
 		len++;
 	}
+
+	/* Determine starting index */
 	if (len % 2 == 0)
 	{
 		start = len / 2;
@@ -21,7 +24,8 @@ void puts_half(char *str)
 	{
 		start = (len + 1) / 2;
 	}
-	
+
+	/* Print characters starting from index 'start' */
 	while (str[start] != '\0')
 	{
 		_putchar(str[start]);
@@ -29,4 +33,3 @@ void puts_half(char *str)
 	}
 	_putchar('\n');
 }
-
