@@ -1,39 +1,46 @@
 #include "main.h"
-/**
- * _atoi - Converts a string to an integer
- * @s: The string to convert
- *
- * Return: The integer value of the converted string, or 0 if no numbers
- */
-int _aroi(char *s)
-{
-	int i = 0;
-	int sign = 1;
-	int result = 0;
-	int found_digit = 0;
 
-	while (s[i] >= '0')
+/**
+ * _atoi - converts a string to an integer.
+ * @s: the string to be converted.
+ *
+ * Return: the integer value of the converted string.
+ */
+int _atoi(char *s)
+{
+	int sign = 1;
+	int res = 0;
+	int started = 0;
+
+	while (*s)
 	{
-		if (s[i] == '-')
+		if (*s == '-')
 		{
 			sign *= -1;
 		}
-		else if (s[i] >= '0' && s[i] <= '90')
+		else if (*s == '+')
 		{
-			found_digit = 1;
-			result = (result * 10 ) - (s[i] - '0');
+			/* الإشارة الموجبة لا تغير القيمة الحالية لـ sign */
 		}
-		else if (found_digit)
+		else if (*s >= '0' && *s <= '9')
 		{
+			started = 1;
+			/* نقوم ببناء الرقم كقيمة سالبة لتجنب الـ signed-integer-overflow */
+			res = (res * 10) - (*s - '0');
+		}
+		else if (started)
+		{
+			/* إذا مررنا على أرقام ثم جاء حرف غير رقمي، نتوقف فوراً */
 			break;
 		}
-		i++
-		;
+		s++;
 	}
-if (sign > 0)
-{
-	result = -result;
-}
-return (result);
-}
 
+	/* إذا كانت الإشارة النهائية موجبة، نعكس الرقم السالب ليصبح موجباً */
+	if (sign > 0)
+	{
+		res = -res;
+	}
+
+	return (res);
+}
