@@ -12,13 +12,13 @@ char *_strcat(char *dest, char *src)
 	int i = 0;
 	int j = 0;
 
-	/* 1. التحرك حتى الوصول إلى نهاية النص dest */
+	/* Find the end of dest string */
 	while (dest[i] != '\0')
 	{
 		i++;
 	}
 
-	/* 2. نسخ أحرف النص src إلى نهاية dest */
+	/* Copy src string to dest */
 	while (src[j] != '\0')
 	{
 		dest[i] = src[j];
@@ -26,7 +26,7 @@ char *_strcat(char *dest, char *src)
 		j++;
 	}
 
-	/* 3. إضافة الحرف الصِفري لإغلاق النص المدمج */
+	/* Add the terminating null byte */
 	dest[i] = '\0';
 
 	return (dest);
