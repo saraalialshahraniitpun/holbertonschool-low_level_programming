@@ -20,23 +20,23 @@ int _atoi(char *s)
 		}
 		else if (*s == '+')
 		{
-			/* الإشارة الموجبة لا تغير القيمة الحالية لـ sign */
+			/* Do nothing for + */
 		}
 		else if (*s >= '0' && *s <= '9')
 		{
 			started = 1;
-			/* نقوم ببناء الرقم كقيمة سالبة لتجنب الـ signed-integer-overflow */
+			/* Build number as negative to avoid overflow */
 			res = (res * 10) - (*s - '0');
 		}
 		else if (started)
 		{
-			/* إذا مررنا على أرقام ثم جاء حرف غير رقمي، نتوقف فوراً */
+			/* Stop if non-digit appears after digits */
 			break;
 		}
 		s++;
 	}
 
-	/* إذا كانت الإشارة النهائية موجبة، نعكس الرقم السالب ليصبح موجباً */
+	/* If final sign is positive, flip the negative result */
 	if (sign > 0)
 	{
 		res = -res;
