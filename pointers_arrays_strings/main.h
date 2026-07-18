@@ -18,4 +18,5 @@ int _strcmp(char *s1, char *s2);
 void reverse_array(int *a, int n);
 char *string_toupper(char *str);
 int is_separator(char c);
+char *leet(char *s);
 #endif /* MAIN_H */
