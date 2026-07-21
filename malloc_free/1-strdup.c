@@ -18,16 +18,13 @@ char *_strdup(char *str)
 	if (str == NULL)
 		return (NULL);
 
-	/* حساب طول السلسلة النصية */
 	while (str[len] != '\0')
 		len++;
 
-	/* تخصيص ذاكرة تتسع للحروف + حرف نهاية النص '\0' */
 	dup = malloc(sizeof(char) * (len + 1));
 	if (dup == NULL)
 		return (NULL);
 
-	/* نسخ الحروف إلى الذاكرة الجديدة */
 	for (i = 0; i <= len; i++)
 		dup[i] = str[i];
 
