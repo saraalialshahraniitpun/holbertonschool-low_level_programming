@@ -1,68 +1,88 @@
+#include "session.h"
 #include <stdlib.h>
 #include <string.h>
-#include "session.h"
 
-session_t *session_create(const char *id, unsigned int uid, const unsigned char *data, size_t data_len)
+session_t *session_create(const char *id, int user_id, const unsigned char *data, size_t data_len)
 {
 	session_t *s;
 
-	s = (session_t *)malloc(sizeof(*s));
-	if (!s)
-		return NULL;
+	if (id == NULL)
+		return (NULL);
 
-	s->id = (char *)id;
+	s = malloc(sizeof(session_t));
+	if (s == NULL)
+		return (NULL);
 
-	s->uid = uid;
+	s->id = strdup(id);
+	if (s->id == NULL)
+	{
+		free(s);
+		return (NULL);
+	}
 
-	if (data_len > 0) {
-		s->data = (unsigned char *)malloc(data_len);
-		if (!s->data) {
-			return NULL;
+	s->user_id = user_id;
+	s->data_len = data_len;
+
+	if (data != NULL && data_len > 0)
+	{
+		s->data = malloc(data_len);
+		if (s->data == NULL)
+		{
+			free(s->id);
+			free(s);
+			return (NULL);
 		}
 		memcpy(s->data, data, data_len);
-		s->data_len = data_len;
-	} else {
+	}
+	else
+	{
 		s->data = NULL;
 		s->data_len = 0;
 	}
 
-	return s;
+	return (s);
 }
 
-int session_set_data(session_t *s, const unsigned char *data, size_t data_len)
+void session_clear_data(session_t *s)
 {
-	unsigned char *tmp;
+	if (s == NULL || s->data == NULL)
+		return;
 
-	if (!s)
-		return 0;
-
-	if (data_len == 0) {
-		free(s->data);
-		s->data = NULL;
-		s->data_len = 0;
-		return 1;
-	}
-
-	tmp = (unsigned char *)realloc(s->data, data_len);
-	s->data = tmp;
-
-	if (!s->data) {
-		s->data_len = 0;
-		return 0;
-	}
-
-	memcpy(s->data, data, data_len);
-	s->data_len = data_len;
-	return 1;
+	memset(s->data, 0, s->data_len);
+	free(s->data);
+	s->data = NULL;
+	s->data_len = 0;
 }
 
 void session_destroy(session_t *s)
 {
-	if (!s)
+	if (s == NULL)
 		return;
 
-	free(s->id);
-
-	free(s->data);
+	session_clear_data(s);
+	if (s->id != NULL)
+		free(s->id);
 	free(s);
+}
+
+int session_update_data(session_t *s, const unsigned char *data, size_t data_len)
+{
+	unsigned char *new_data = NULL;
+
+	if (s == NULL)
+		return (-1);
+
+	if (data != NULL && data_len > 0)
+	{
+		new_data = malloc(data_len);
+		if (new_data == NULL)
+			return (-1);
+		memcpy(new_data, data, data_len);
+	}
+
+	session_clear_data(s);
+	s->data = new_data;
+	s->data_len = (new_data != NULL) ? data_len : 0;
+
+	return (0);
 }
