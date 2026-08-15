@@ -68,7 +68,7 @@ int session_set_data(session_t *s, const unsigned char *data, size_t data_len)
 	if (s == NULL)
 		return (0);
 
-	if ((data == NULL && data_len > 0) || (data != NULL && data_len == 0))
+	if (data == NULL && data_len > 0)
 		return (0);
 
 	if (data != NULL && data_len > 0)
