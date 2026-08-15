@@ -1,125 +1,135 @@
-#include "store.h"
 #include <stdlib.h>
 #include <string.h>
+#include "store.h"
 
-store_t *store_create(size_t initial_capacity)
+/**
+ * store_init - Initializes the store structure.
+ * @st: Pointer to the store to initialize.
+ */
+void store_init(store_t *st)
 {
-	store_t *st;
-
-	if (initial_capacity == 0)
-		initial_capacity = 4;
-
-	st = malloc(sizeof(store_t));
 	if (st == NULL)
-		return (NULL);
+		return;
 
-	st->sessions = calloc(initial_capacity, sizeof(session_t *));
-	if (st->sessions == NULL)
-	{
-		free(st);
-		return (NULL);
-	}
-
-	st->capacity = initial_capacity;
-	st->count = 0;
-	return (st);
+	st->head = NULL;
 }
 
-session_t *store_find(store_t *st, const char *id)
+/**
+ * store_add - Adds a session to the store.
+ * @st: Pointer to the store.
+ * @s: Pointer to the session to add.
+ *
+ * Return: 1 on success, 0 on failure.
+ */
+int store_add(store_t *st, session_t *s)
 {
-	size_t i;
+	node_t *new_node;
 
-	if (st == NULL || id == NULL || st->sessions == NULL)
+	if (st == NULL || s == NULL)
+		return (0);
+
+	new_node = malloc(sizeof(node_t));
+	if (new_node == NULL)
+		return (0);
+
+	new_node->sess = s;
+	new_node->next = st->head;
+	st->head = new_node;
+
+	return (1);
+}
+
+/**
+ * store_get - Retrieves a session by its ID.
+ * @st: Pointer to the store.
+ * @id: Session ID to search for.
+ *
+ * Return: Pointer to session_t if found, NULL otherwise.
+ */
+session_t *store_get(store_t *st, const char *id)
+{
+	node_t *curr;
+
+	if (st == NULL || id == NULL)
 		return (NULL);
 
-	for (i = 0; i < st->count; i++)
+	curr = st->head;
+	while (curr != NULL)
 	{
-		if (st->sessions[i] != NULL && st->sessions[i]->id != NULL)
+		if (curr->sess != NULL && curr->sess->id != NULL)
 		{
-			if (strcmp(st->sessions[i]->id, id) == 0)
-				return (st->sessions[i]);
+			if (strcmp(curr->sess->id, id) == 0)
+				return (curr->sess);
 		}
+		curr = curr->next;
 	}
+
 	return (NULL);
 }
 
-int store_insert(store_t *st, session_t *session)
+/**
+ * store_delete - Deletes a session by ID.
+ * @st: Pointer to the store.
+ * @id: Session ID to delete.
+ * @out: Pointer to store deleted session if not destroyed.
+ *
+ * Return: 1 if deleted, 0 if not found or invalid input.
+ */
+int store_delete(store_t *st, const char *id, session_t **out)
 {
-	session_t **new_sessions;
-	size_t new_capacity;
+	node_t *curr, *prev;
 
-	if (st == NULL || session == NULL || session->id == NULL)
-		return (-1);
+	if (st == NULL || id == NULL)
+		return (0);
 
-	if (store_find(st, session->id) != NULL)
-		return (-1);
+	curr = st->head;
+	prev = NULL;
 
-	if (st->count >= st->capacity)
+	while (curr != NULL)
 	{
-		new_capacity = st->capacity * 2;
-		new_sessions = realloc(st->sessions, new_capacity * sizeof(session_t *));
-		if (new_sessions == NULL)
-			return (-1);
+		if (curr->sess != NULL && curr->sess->id != NULL &&
+		    strcmp(curr->sess->id, id) == 0)
+		{
+			if (prev == NULL)
+				st->head = curr->next;
+			else
+				prev->next = curr->next;
 
-		st->sessions = new_sessions;
-		st->capacity = new_capacity;
+			if (out != NULL)
+				*out = curr->sess;
+			else
+				session_destroy(curr->sess);
+
+			free(curr);
+			return (1);
+		}
+		prev = curr;
+		curr = curr->next;
 	}
 
-	st->sessions[st->count] = session;
-	st->count++;
 	return (0);
 }
 
-int store_delete(store_t *st, const char *id)
-{
-	size_t i, j;
-
-	if (st == NULL || id == NULL || st->sessions == NULL)
-		return (-1);
-
-	for (i = 0; i < st->count; i++)
-	{
-		if (st->sessions[i] != NULL && st->sessions[i]->id != NULL)
-		{
-			if (strcmp(st->sessions[i]->id, id) == 0)
-			{
-				session_destroy(st->sessions[i]);
-				for (j = i; j < st->count - 1; j++)
-					st->sessions[j] = st->sessions[j + 1];
-				st->sessions[st->count - 1] = NULL;
-				st->count--;
-				return (0);
-			}
-		}
-	}
-	return (-1);
-}
-
-void store_clear(store_t *st)
-{
-	size_t i;
-
-	if (st == NULL || st->sessions == NULL)
-		return;
-
-	for (i = 0; i < st->count; i++)
-	{
-		if (st->sessions[i] != NULL)
-		{
-			session_destroy(st->sessions[i]);
-			st->sessions[i] = NULL;
-		}
-	}
-	st->count = 0;
-}
-
+/**
+ * store_destroy - Frees all allocated memory for store nodes and sessions.
+ * @st: Pointer to the store.
+ */
 void store_destroy(store_t *st)
 {
+	node_t *curr, *temp;
+
 	if (st == NULL)
 		return;
 
-	store_clear(st);
-	if (st->sessions != NULL)
-		free(st->sessions);
-	free(st);
+	curr = st->head;
+	while (curr != NULL)
+	{
+		temp = curr->next;
+		if (curr->sess != NULL)
+			session_destroy(curr->sess);
+		free(curr);
+		curr = temp;
+	}
+
+	st->head = NULL;
 }
