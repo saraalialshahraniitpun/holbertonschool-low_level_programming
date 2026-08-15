@@ -25,7 +25,10 @@ int store_add(store_t *st, session_t *s)
 {
 	node_t *new_node;
 
-	if (st == NULL || s == NULL)
+	if (st == NULL || s == NULL || s->id == NULL)
+		return (0);
+
+	if (store_get(st, s->id) != NULL)
 		return (0);
 
 	new_node = malloc(sizeof(node_t));

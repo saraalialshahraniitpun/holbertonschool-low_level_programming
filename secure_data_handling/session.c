@@ -19,6 +19,9 @@ session_t *session_create(const char *id, unsigned int uid,
 	if (id == NULL)
 		return (NULL);
 
+	if (data == NULL && data_len > 0)
+		return (NULL);
+
 	s = malloc(sizeof(session_t));
 	if (s == NULL)
 		return (NULL);
@@ -63,6 +66,9 @@ int session_set_data(session_t *s, const unsigned char *data, size_t data_len)
 	unsigned char *new_data = NULL;
 
 	if (s == NULL)
+		return (0);
+
+	if ((data == NULL && data_len > 0) || (data != NULL && data_len == 0))
 		return (0);
 
 	if (data != NULL && data_len > 0)
