@@ -25,12 +25,26 @@ int store_add(store_t *st, session_t *s)
 {
 	node_t *new_node;
 
-	if (st == NULL || s == NULL)
+	if (st == NULL || s == NULL || s->id == NULL)
+	{
+		if (s != NULL)
+			session_destroy(s);
 		return (0);
+	}
+
+	/* إذا كان ID مكرر، نقوم بتدمير الجلسة لحمايتها من التسريب وإرجاع 0 */
+	if (store_get(st, s->id) != NULL)
+	{
+		session_destroy(s);
+		return (0);
+	}
 
 	new_node = malloc(sizeof(node_t));
 	if (new_node == NULL)
+	{
+		session_destroy(s);
 		return (0);
+	}
 
 	new_node->sess = s;
 	new_node->next = st->head;
