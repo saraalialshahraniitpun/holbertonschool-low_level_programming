@@ -7,6 +7,11 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <stdio.h>
+
+#ifndef BUF_SIZE
+#define BUF_SIZE 1024
+#endif
 
 int _putchar(char c);
 ssize_t read_textfile(const char *filename, size_t letters);
